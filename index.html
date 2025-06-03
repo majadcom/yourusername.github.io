@@ -1,0 +1,184 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>محول العملات المباشر - تحويل الريال والدولار وعملات أخرى</title>
+<style>
+  body {
+    font-family: "Arial", sans-serif;
+    background: #f5f7fa;
+    margin: 20px;
+    color: #222;
+  }
+  .container {
+    max-width: 720px;
+    margin: auto;
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  }
+  h1 {
+    color: #004085;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .image-wrapper {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .image-wrapper img {
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+  p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+  }
+  select, input[type="number"] {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1.1em;
+    border: 1.8px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  select:focus, input[type="number"]:focus {
+    border-color: #0056b3;
+    outline: none;
+  }
+  button {
+    width: 100%;
+    background-color: #0056b3;
+    color: white;
+    font-size: 1.2em;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #003d80;
+  }
+  .result {
+    margin-top: 25px;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+    color: #155724;
+    background-color: #d4edda;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1.5px solid #c3e6cb;
+    display: none;
+  }
+  .footer-note {
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #555;
+    text-align: center;
+  }
+</style>
+<div class="container">
+  <h1>أداة تحويل العملات المباشرة</h1>
+  <div class="image-wrapper">
+    <img src="https://cdn.pixabay.com/photo/2017/01/31/13/14/money-2029033_1280.jpg" alt="تحويل العملات" />
+  </div>
+  <p>
+    استخدم هذه الأداة لتحويل العملات بدقة عالية وبأسعار صرف محدثة لحظيًا من الإنترنت. يمكنك التحويل بين الريال السعودي، الدولار الأمريكي، واليورو، والجنيه الإسترليني، والعديد من العملات الأخرى.
+  </p>
+  <p>
+    فقط اختر العملة التي تريد التحويل منها، ثم العملة التي تريد التحويل إليها، وأدخل المبلغ. ستظهر النتيجة مباشرة بعد الضغط على زر التحويل.
+  </p>
+
+  <form id="converterForm" autocomplete="off">
+    <label for="fromCurrency">اختر العملة الأصلية:</label>
+    <select id="fromCurrency" required>
+      <option value="SAR">الريال السعودي (SAR)</option>
+      <option value="USD">الدولار الأمريكي (USD)</option>
+      <option value="EUR">اليورو (EUR)</option>
+      <option value="GBP">الجنيه الإسترليني (GBP)</option>
+      <option value="AED">درهم الإمارات (AED)</option>
+      <option value="JPY">الين الياباني (JPY)</option>
+      <option value="EGP">الجنيه المصري (EGP)</option>
+    </select>
+
+    <label for="toCurrency">اختر العملة المراد التحويل إليها:</label>
+    <select id="toCurrency" required>
+      <option value="USD">الدولار الأمريكي (USD)</option>
+      <option value="SAR">الريال السعودي (SAR)</option>
+      <option value="EUR">اليورو (EUR)</option>
+      <option value="GBP">الجنيه الإسترليني (GBP)</option>
+      <option value="AED">درهم الإمارات (AED)</option>
+      <option value="JPY">الين الياباني (JPY)</option>
+      <option value="EGP">الجنيه المصري (EGP)</option>
+    </select>
+
+    <label for="amount">أدخل المبلغ:</label>
+    <input type="number" id="amount" min="0" step="0.01" placeholder="مثلاً: 100" required />
+
+    <button type="submit">تحويل العملات</button>
+  </form>
+
+  <div class="result" id="result"></div>
+
+  <p class="footer-note">
+    * يتم تحديث أسعار الصرف تلقائيًا من مصادر موثوقة لضمان الدقة. الأسعار عرضة للتغيير حسب السوق.
+  </p>
+</div>
+
+<script>
+  const form = document.getElementById('converterForm');
+  const resultDiv = document.getElementById('result');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const from = document.getElementById('fromCurrency').value;
+    const to = document.getElementById('toCurrency').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+
+    if (amount < 0 || isNaN(amount)) {
+      alert('يرجى إدخال مبلغ صالح أكبر من أو يساوي الصفر.');
+      resultDiv.style.display = 'none';
+      return;
+    }
+
+    if (from === to) {
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = 'العملتان متطابقتان، يرجى اختيار عملتين مختلفتين.';
+      return;
+    }
+
+    try {
+      // استخدام API مجاني بدون مفتاح من exchangerate.host
+      const url = `https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`;
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('فشل في جلب بيانات سعر الصرف.');
+      }
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error('تعذر الحصول على بيانات الصرف.');
+      }
+
+      const converted = data.result;
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = `المبلغ بعد التحويل: ${converted.toFixed(2)} ${to}`;
+    } catch (error) {
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = `حدث خطأ: ${error.message}`;
+    }
+  });
+</script>
